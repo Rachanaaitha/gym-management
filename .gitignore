@@ -1,0 +1,9 @@
+env/
+node_modules/
+sites/*/private/
+sites/*/public/
+*.pyc
+__pycache__/
+*.log
+*.sqlite
+Untitled-*.txt

@@ -1,0 +1,181 @@
+import frappe
+from strands import Agent
+from strands.models.anthropic import AnthropicModel
+from strands.tools.mcp import MCPClient
+from mcp.client.streamable_http import streamablehttp_client
+from functools import partial
+from typing import Dict, Any
+
+# ── CONFIG (like weather agent's API URLs) ──────────────
+FAC_MCP_URL = "http://localhost:8002/api/method/frappe_assistant_core.api.fac_endpoint.handle_mcp"
+FAC_MCP_HEADERS = {"Authorization": "token 36e952865212b52:60a21c62fedc628"}
+
+# ── SYSTEM PROMPT (like WEATHER_SYSTEM_PROMPT) ──────────
+SO_SYSTEM_PROMPT = """
+You are a Frappe ERP assistant.
+You can:
+1. Use get_document tool to fetch Sales Order data
+2. Extract required fields from the fetched document
+3. Return formatted Sales Order information
+
+When fetching Sales Order:
+1. Use get_document with doctype="Sales Order" and name=<doc_name>
+2. Extract: customer_name, transaction_date, delivery_date, grand_total, status, items
+3. Return in clean formatted text
+"""
+
+SO_FORMAT_PROMPT = """
+When displaying responses:
+- Return in this exact format:
+  I have completed fetching Sales Order [doc_name].
+
+  Details:
+  Customer    : [customer_name]
+  Order Date  : [transaction_date]
+  Delivery    : [delivery_date]
+  Status      : [status]
+  Grand Total : Rs.[grand_total]
+
+  Items Ordered:
+  - [item_name] | Qty: [qty] | Rate: Rs.[rate]
+
+- Do NOT add extra text
+- Do NOT return full raw document
+- Keep it SHORT and CLEAN
+"""
+
+SO_SYSTEM_PROMPT = SO_SYSTEM_PROMPT + SO_FORMAT_PROMPT
+
+# ── MODEL (like BedrockModel in weather agent) ──────────
+ANTHROPIC_API_KEY = "your-anthropic-key-here"
+
+anthropic_model = AnthropicModel(
+    client_args={"api_key": ANTHROPIC_API_KEY},
+    model_id="claude-haiku-4-5-20251001",
+    max_tokens=1024,
+)
+
+
+# ── HOOK TRIGGER (like Lambda handler) ──────────────────
+def generate_so_info(doc, method=None):
+    frappe.enqueue(
+        "frappe_assistant_core.so_summary.so_agent",
+        queue="long",
+        timeout=300,
+        doc_name=doc.name,
+    )
+
+
+# ── MAIN HANDLER (like weather() function) ──────────────
+def so_agent(event: Dict[str, Any] = None, doc_name: str = None) -> str:
+    # get doc_name from event or direct call
+    if event:
+        doc_name = event.get("doc_name")
+    if not doc_name:
+        return "Missing required parameter: doc_name"
+
+    transport = partial(streamablehttp_client, FAC_MCP_URL, headers=FAC_MCP_HEADERS)
+
+    with MCPClient(transport) as mcp_client:
+        tools = mcp_client.list_tools_sync()
+
+        so_agent_instance = Agent(
+            model=anthropic_model,
+            system_prompt=SO_SYSTEM_PROMPT,
+            tools=tools,
+        )
+
+        response = so_agent_instance(
+            f'Use get_document with doctype="Sales Order" name="{doc_name}"'
+        )
+
+    summary = str(response).strip()
+
+    # save to field
+    frappe.db.set_value("Sales Order", doc_name, "custom_ai_summary", summary)
+    frappe.db.commit()
+
+    return summary
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+── IMPORTS ──────────────────────────────────────────────
+import frappe                          # Frappe framework
+import os                              # to set env variables
+from strands import Agent              # Strands Agent (brain)
+from strands.models.litellm import LiteLLMModel  # LiteLLM wrapper for Groq
+from strands.tools.mcp import MCPClient           # MCP tool connector
+from mcp.client.streamable_http import streamablehttp_client  # HTTP transport
+from functools import partial          # to pre-fill function args
+
+# ── CONFIG ───────────────────────────────────────────────
+FAC_MCP_URL = "http://localhost:8002/..."   # FAC MCP server URL
+FAC_MCP_HEADERS = {"Authorization": "..."}  # auth token
+GROQ_API_KEY = "gsk_..."                    # Groq API key
+
+# ── HOOK (runs on Submit button click) ───────────────────
+def generate_so_info(doc, method=None):
+    frappe.enqueue(                    # dont block UI, run in background
+        "...run_so_agent",
+        queue="long",                  # use long queue (heavy task)
+        timeout=300,                   # max 5 minutes
+        doc_name=doc.name,             # pass SO name to background job
+    )
+
+# ── BACKGROUND JOB (actual AI work) ──────────────────────
+def run_so_agent(doc_name):
+    try:
+        os.environ["GROQ_API_KEY"] = GROQ_API_KEY  # set key for LiteLLM
+
+        transport = partial(           # create MCP connection
+            streamablehttp_client, 
+            FAC_MCP_URL, 
+            headers=FAC_MCP_HEADERS
+        )
+
+        with MCPClient(transport) as mcp_client:      # connect to FAC MCP
+            tools = mcp_client.list_tools_sync()      # get all 16 FAC tools
+
+            model = LiteLLMModel(
+                model_id="groq/llama-3.3-70b-versatile",  # Groq LLaMA model
+            )
+
+            agent = Agent(
+                model=model,           # Groq as the brain
+                system_prompt="You are a Frappe ERP assistant...",
+                tools=tools,           # give agent FAC tools
+            )
+
+            response = agent(          # agent decides to call get_document
+                f"Fetch Sales Order {doc_name} using get_document tool..."
+            )
+
+        # save AI response to field
+        frappe.db.set_value("Sales Order", doc_name, "custom_ai_summary", str(response))
+        frappe.db.commit()
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "SO Fetch Error")
+```
+
+**Compared to weather agent:**
+```
+Weather Agent                    Your Agent
+─────────────────                ──────────────────────
+Agent(                           Agent(
+  tools=[http_request]             tools=FAC MCP tools  ← 16 Frappe tools
+  model=default                    model=Groq LLaMA     ← via LiteLLM
+)                                )
+agent("weather in Seattle")      agent("Fetch SO-XXX")
+return str(response)             frappe.db.set_value() ← saves to field

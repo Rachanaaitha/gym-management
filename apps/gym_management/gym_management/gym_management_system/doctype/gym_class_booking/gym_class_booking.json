@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "CB-.####",
+ "creation": "2026-03-21 19:33:54.504460",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_5fgq",
+  "amended_from",
+  "member",
+  "class_type",
+  "class_date",
+  "time_slot",
+  "trainer",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_5fgq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Gym Class Booking",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "member",
+   "fieldtype": "Link",
+   "label": "Member",
+   "options": "Gym Member"
+  },
+  {
+   "fieldname": "class_type",
+   "fieldtype": "Select",
+   "label": "Class Type",
+   "options": "Yoga\nZumba\nBoxing\nDance Fitness\nCrossFit"
+  },
+  {
+   "fieldname": "class_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Class Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "time_slot",
+   "fieldtype": "Select",
+   "label": "Time Slot",
+   "options": "6:00 AM - 7:00 AM\n7:00 AM - 8:00 AM\n5:00 PM - 6:00 PM\n6:00 PM - 7:00 PM"
+  },
+  {
+   "fieldname": "trainer",
+   "fieldtype": "Link",
+   "label": "Trainer",
+   "options": "Gym Trainer"
+  },
+  {
+   "default": "Booked",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Booked\nAttended\nCancelled"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-03-23 06:15:34.123498",
+ "modified_by": "Administrator",
+ "module": "Gym Management System",
+ "name": "Gym Class Booking",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

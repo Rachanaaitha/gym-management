@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-21 19:59:21.378273",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_vzbk",
+  "total_lockers",
+  "default_membership_duration",
+  "gym_name",
+  "contact_email"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_vzbk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_lockers",
+   "fieldtype": "Int",
+   "label": "Total Lockers"
+  },
+  {
+   "fieldname": "default_membership_duration",
+   "fieldtype": "Int",
+   "label": "Default Membership Duration"
+  },
+  {
+   "fieldname": "gym_name",
+   "fieldtype": "Data",
+   "label": "Gym Name"
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email",
+   "options": "Email"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-03-23 06:15:51.870234",
+ "modified_by": "Administrator",
+ "module": "Gym Management System",
+ "name": "Gym Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

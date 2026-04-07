@@ -1,0 +1,12 @@
+{
+  "allow_tests": true,
+  "db_name": "_4314ae4d10503e6f",
+  "db_password": "U7NCugI4Vzwatc2B",
+  "db_type": "mariadb",
+  "developer_mode": 1,
+  "encryption_key": "tQgCKXZ7YdpxgoQOKMOVYOxvKk5ktiTA0o4rPT9Az7k=",
+  "server_script_enabled": 1,
+  "webserver_port": 8004,
+  "socketio_port": 9000,
+  "host_name": "http://gym.local:8004"
+}

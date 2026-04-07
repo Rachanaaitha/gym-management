@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "GF-.####",
+ "creation": "2026-03-22 00:04:53.455276",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_8egt",
+  "member",
+  "date",
+  "weight",
+  "calories",
+  "workout_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_8egt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "member",
+   "fieldtype": "Link",
+   "label": "Member",
+   "options": "Gym Member"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "label": "Weight"
+  },
+  {
+   "fieldname": "calories",
+   "fieldtype": "Int",
+   "label": "Calories"
+  },
+  {
+   "fieldname": "workout_type",
+   "fieldtype": "Select",
+   "label": "Workout Type",
+   "options": "Cardio\nStrength\nYoga"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-23 06:16:06.785813",
+ "modified_by": "Administrator",
+ "module": "Gym Management System",
+ "name": "Gym Fitness Log",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
